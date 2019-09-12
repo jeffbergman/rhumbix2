@@ -1,26 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import React, { Component } from 'react';
+import axios from 'axios';
+
+class App extends Component {
+
+  state = {
+    term: '',
+    pic: '',
+  }
+
+  handleChange = evt => {
+    this.setState({term: evt.target.value});
+    console.log('term', this.state.term);
+  }
+
+  handleSubmit = async evt => {
+
+    evt.preventDefault();
+    console.log('here');
+    try {
+      const url = `http://api.giphy.com/v1/gifs/search?q=${this.state.term}&api_key=DLCVuTK6KZExOS7JoMq82bi5MaI6EbWO&limit=1`;
+      console.log('url', url);
+      const res = await axios.get(`http://api.giphy.com/v1/gifs/search?q=${this.state.term}&api_key=DLCVuTK6KZExOS7JoMq82bi5MaI6EbWO&limit=1`);
+      console.log('res', res.data.data[0].images.original.url);
+      this.setState({ pic: res.data.data[0].images.original.url });
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
+  render () {
+    return (
+      <>
+        <form onSubmit={this.handleSubmit}>
+        <input
+            type="text"
+            placeholder="Search for..."
+            onChange={this.handleChange}
+          />
+        </form>
+        <img src={this.state.pic} alt="pic"/>
+      </>
+    );
+
+  }
+
 }
 
 export default App;
